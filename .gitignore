@@ -12,6 +12,8 @@
 !.gitignore
 !Makefile
 !*.md
+!*.gitkeep
+
 
 # ==============================================================================
 # 3. Whitelist: Source Code & Scripting Assets

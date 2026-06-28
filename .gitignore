@@ -1,0 +1,46 @@
+# ==============================================================================
+# 1. Global Ignore: Block everything by default
+# ==============================================================================
+*
+
+# ==============================================================================
+# 2. Whitelist: Structural Repository Layout & Base Files
+# ==============================================================================
+!*/
+!README.md
+!LICENSE
+!.gitignore
+!Makefile
+!*.md
+
+# ==============================================================================
+# 3. Whitelist: Source Code & Scripting Assets
+# ==============================================================================
+# SystemVerilog, Verilog, and Header files
+!*.sv
+!*.v
+!*.vh
+
+# C/C++ Software files
+!*.cpp
+!*.h
+!*.c
+
+# Automation & Tool constraints
+!*.tcl
+!*.xdc
+!*.wcfg
+
+# ==============================================================================
+# 4. Explicit Tool-Generated Blacklist (Safety Net for directory overrides)
+# ==============================================================================
+.Xil/
+*.log
+*.jou
+*.pb
+*.dir/
+*.str
+*.vcd
+*.wdb
+xsim.dir/
+xsim_*.backup.cdb

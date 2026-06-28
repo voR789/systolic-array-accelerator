@@ -1,2 +1,1 @@
-# systolic-array-accelerator
-This repository is a personal project in which the goal is to design a verified 8 x 8 systolic array in SystemVerilog in order to accelerate machine learning models on edge hardware.
+A high-throughput, energy-efficient $8 \times 8$ Weight-Stationary Systolic Array matrix multiplication engine designed to accelerate convolutional and fully connected layers for the LeNet-5 neural network architecture. Tailored for real-time edge AI inference using the MNIST dataset ($28 \times 28$ grayscale images), this project runs on the Digilent Cora Z7-10 (Xilinx Zynq-7000 SoC).

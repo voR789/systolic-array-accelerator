@@ -7,7 +7,7 @@ module pe(
     // Control Flags
     // Must assert i_clear_acc if i_load_weight is high
     input logic i_load_weight, // Load weight flag
-    input logic i_clear_acc, // Clear accumulator flag
+    input logic i_clear_acc, // Clear accumulator flag 
 
     input logic signed[7:0] i_act, // Activation input bus from western neighbor
     input logic signed[23:0] i_psum, // Partial sum input bus from northern neighbor
@@ -62,7 +62,7 @@ module pe(
         end
     end
 
-    gated_act = i_load_weight ? 8'sd0 : i_act;
+    assign gated_act = i_load_weight ? 8'sd0 : i_act;
     assign next_prod = weight_reg * gated_act;
     assign next_o_psum = i_clear_acc ? 24'sd0 : (i_psum + 24'(prod_reg));
 endmodule

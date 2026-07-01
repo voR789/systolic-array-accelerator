@@ -55,14 +55,13 @@ module pe(
             prod_reg <= '0;
             o_psum <= '0;
         end else if( i_ee ) begin
-            if( !i_load_weight ) begin // Stall math engine when loading to lower dynamic power consumption
-                prod_reg <= next_prod;
-            end 
+            prod_reg <= next_prod;
             o_psum <= next_o_psum; 
         end
     end
 
-    assign gated_act = i_load_weight ? 8'sd0 : i_act;
+    // Mux activation with zero during loading phase in order to save power.
+    assign gated_act = i_load_weight ? 8'sd0 : i_act; 
     assign next_prod = weight_reg * gated_act;
     assign next_o_psum = i_clear_acc ? 24'sd0 : (i_psum + 24'(prod_reg));
 endmodule

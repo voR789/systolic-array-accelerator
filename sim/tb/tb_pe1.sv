@@ -5,6 +5,8 @@ module tb_pe1 ();
     logic               ee           ;
     logic               i_load_weight;
     logic               i_clear_acc  ;
+    logic               o_load_weight;
+    logic               o_clear_acc  ;
     logic signed [ 7:0] i_act        ;
     logic signed [23:0] i_psum       ;
 
@@ -17,6 +19,8 @@ module tb_pe1 ();
         .i_ee         (ee           ),
         .i_load_weight(i_load_weight),
         .i_clear_acc  (i_clear_acc  ),
+        .o_load_weight(o_load_weight),
+        .o_clear_acc  (o_clear_acc  ),
         .i_act        (i_act        ),
         .i_psum       (i_psum       ),
         .o_act        (o_act        ),
@@ -32,6 +36,10 @@ module tb_pe1 ();
         logic signed [ 7:0] expected_act ;
         logic signed [23:0] expected_psum;
         logic               clear_acc    ; // Flag that signals packet before it should have expected_psum = 0
+
+        // NEW: Control flag pipelines
+        logic expected_load_weight;
+        logic expected_clear_acc  ;
     } res_packet;
     res_packet         sb_queue     [$];
     logic signed [7:0] loaded_weight   ;
@@ -63,6 +71,10 @@ module tb_pe1 ();
             pkt.expected_psum = (act * loaded_weight) + psum;
             pkt.clear_acc = clear;
 
+            // NEW: Control flag pipeline
+            pkt.expected_load_weight = load;
+            pkt.expected_clear_acc = clear;
+
             // Push to scoreboard queue our "expected" outputs
             sb_queue.push_back(pkt);
         end else begin
@@ -70,6 +82,10 @@ module tb_pe1 ();
             pkt.expected_act = act;
             pkt.expected_psum = psum;
             pkt.clear_acc = clear;
+
+            // NEW: Control flag pipeline
+            pkt.expected_load_weight = load;
+            pkt.expected_clear_acc = clear;
 
             // Push to scoreboard queue our "expected" outputs
             sb_queue.push_back(pkt);
@@ -165,6 +181,18 @@ module tb_pe1 ();
                     $display("Partial sum does not match!");
                     $display("Expected partial sum: %d", exp.expected_psum);
                     $display("Actual partial sum: %d", o_psum);
+                end
+                if(o_load_weight !== exp.expected_load_weight) begin
+                    $display("Time: %t", $time);
+                    $display("Output load weight does not match!");
+                    $display("Expected load weight: %d", exp.expected_load_weight);
+                    $display("Actual load weight: %d", o_load_weight);    
+                end
+                if(o_clear_acc !== exp.expected_clear_acc) begin
+                    $display("Time: %t", $time);
+                    $display("Output clear accumulator does not match!");
+                    $display("Expected clear accumulator: %d", exp.expected_clear_acc);
+                    $display("Actual clear accumulator: %d", o_clear_acc);
                 end
             end
         end

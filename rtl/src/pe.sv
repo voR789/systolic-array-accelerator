@@ -6,8 +6,10 @@ module pe(
 
     // Control Flags
     // Must assert i_clear_acc if i_load_weight is high
-    input logic i_load_weight, // Load weight flag
-    input logic i_clear_acc, // Clear accumulator flag 
+    input logic i_load_weight, // Load weight input from western neighbor
+    input logic i_clear_acc, // Clear accumulator input from northern neighbor
+    output logic o_load_weight, // Load weight output to eastern neighbor
+    output logic o_clear_acc,  // Load weight output to eastern neighbor
 
     input logic signed[7:0] i_act, // Activation input bus from western neighbor
     input logic signed[23:0] i_psum, // Partial sum input bus from northern neighbor
@@ -15,6 +17,7 @@ module pe(
     output logic signed[7:0] o_act, // Registered activation output bus to eastern neighbor
     output logic signed[23:0] o_psum // Registered compute output bus to southern neighbor
 );
+
     // Two outputs -> two pipelines
     // Output 1: Multiply Accumulate Sum propogated vertically, takes at least 2 cycles to run.
     // Output 2: Activation propogated horizontally, no math, but must be buffered by 1 cycle to match output 1.
@@ -30,16 +33,37 @@ module pe(
         end 
     end
 
-    // Activation pipeline buffer
-    logic signed [ 7:0] act_reg;
+    // Local signal pipeline buffer (activation, load_weight, clear_acc)
+    logic signed [7:0] act_reg;
+    logic load_reg;
+    logic clear_reg;
     
+    // Pipeline signals to match 2 cycle latency of DSP MAC
     always_ff @( posedge i_clk ) begin : act_pipeline
         if(!i_rst_n) begin
+            // Activation pipeline
             act_reg <= '0;
             o_act <= '0;
+
+            // Load_weight flag pipeline
+            load_reg <= '0;
+            o_load_weight <= '0;
+
+            // Clear_acc flag pipeline
+            clear_reg <= '0;
+            o_clear_acc <= '0;
         end else if( i_ee )begin
+            // Activation pipeline
             act_reg <= i_act;
             o_act <= act_reg;
+
+            // Load_weight flag pipeline
+            load_reg <= i_load_weight;
+            o_load_weight <= load_reg;
+
+            // Clear_acc flag pipeline
+            clear_reg <= i_clear_acc;
+            o_clear_acc <= clear_reg;
         end
     end
 
